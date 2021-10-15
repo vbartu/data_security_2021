@@ -81,9 +81,13 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public String startSession(String username, String password) throws RemoteException {
-        return authenticator.authenticate(username, password);
+    public String startSession(String username, String password) throws RemoteException { // Returns session token
+        if (this.authenticator.authenticate(username, password)) {
+			return this.tokenChecker.newSession(username);
+		}
+		return null;
     }
+
     public static void main(String[] args){
         /*System.setProperty("java.security.policy", "server.policy");
 
@@ -93,9 +97,9 @@ public class PrintServer extends BaseServer implements IPrintServer {
         try {
             IPrintServer server = new PrintServer();
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
-            Registry registry = LocateRegistry.getRegistry();//1099
+            Registry registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("Print Server exception: ");
             e.printStackTrace();
         }
