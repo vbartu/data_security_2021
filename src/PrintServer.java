@@ -1,5 +1,3 @@
-package server;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,6 +18,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if(this.tokenChecker.checkToken(token)){
             super.print(filename, printer);
         }
+        System.out.println("server: print");
     }
 
     @Override
@@ -86,14 +85,16 @@ public class PrintServer extends BaseServer implements IPrintServer {
         return authenticator.authenticate(username, password);
     }
     public static void main(String[] args){
+        /*System.setProperty("java.security.policy", "server.policy");
+
         if(System.getSecurityManager() == null){
             System.setSecurityManager(new SecurityManager());
-        }
+        }*/
         try {
             IPrintServer server = new PrintServer();
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
-            Registry registry = LocateRegistry.getRegistry();
-            registry.rebind("printserver", stub);
+            Registry registry = LocateRegistry.getRegistry();//1099
+            registry.bind("IPrintServer", stub);
         }catch (Exception e){
             System.err.println("Print Server exception: ");
             e.printStackTrace();

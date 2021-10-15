@@ -1,5 +1,3 @@
-package server;
-
 import java.util.*;
 
 interface ServerInterface {
@@ -17,8 +15,14 @@ interface ServerInterface {
 
 public class BaseServer implements ServerInterface {
 
-	private Dictionary<String, ArrayList<String>> printers;
-	private Dictionary<String, String> parameters;
+	private Map<String, ArrayList<String>> printers;
+	private Map<String, String> parameters;
+
+	void BaseServer(){
+		this.printers = new HashMap<>();
+		this.parameters = new HashMap<>();
+			
+	}
 
 
 	public void print(String filename, String printer) {
