@@ -1,4 +1,5 @@
-import java.rmi.Remote;
+package server;
+
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -81,8 +82,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public void authenticate(String username, String password) throws RemoteException {
-        authenticator.authenticate(username, password);
+    public String startSession(String username, String password) throws RemoteException {
+        return authenticator.authenticate(username, password);
     }
     public static void main(String[] args){
         if(System.getSecurityManager() == null){
