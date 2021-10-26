@@ -18,10 +18,9 @@ public class BaseServer implements ServerInterface {
 	private Map<String, ArrayList<String>> printers;
 	private Map<String, String> parameters;
 
-	void BaseServer(){
+	public BaseServer() {
 		this.printers = new HashMap<>();
 		this.parameters = new HashMap<>();
-			
 	}
 
 
