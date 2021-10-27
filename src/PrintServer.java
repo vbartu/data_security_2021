@@ -3,6 +3,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class PrintServer extends BaseServer implements IPrintServer {
     private TokenChecker tokenChecker;
@@ -89,31 +90,25 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     public static void main(String[] args){
-        /*System.setProperty("java.security.policy", "server.policy");
-
-        if(System.getSecurityManager() == null){
-            System.setSecurityManager(new SecurityManager());
-        }*/
         Registry registry = null;
-        try {
+        try(Scanner sc = new Scanner(System.in)) {
             IPrintServer server = new PrintServer();
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
             registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
 			System.out.println("1");
-			while (true);
+			while (true){
+                Thread.sleep(1000);
+                if(sc.nextLine().trim().equals("q")){
+                    System.out.println("Exiting...");
+                    registry.unbind("IPrintServer");
+                    break;
+                }
+            }
         } catch (Exception e) {
 			System.out.println("2");
             System.err.println("Print Server exception: ");
             e.printStackTrace();
-        } finally {
-			System.out.println("3");
-			System.out.println("Exiting...");
-			try {
-				if (registry != null) {
-					registry.unbind("IPrintServer");
-				}
-			} catch (Exception e) {}
-		}
+        }
     }
 }
