@@ -1,14 +1,16 @@
 import java.util.*;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.nio.charset.StandardCharsets;
+import java.io.*;
 
 
 public class Authenticator {
 
+	static final String FILE_PATH = "/tmp/print_server_users.csv";
 	static final int HASH_LENGTH = 64; // 512 bits
 	static final int SALT_LENGTH = 8;  // 64 bits
 
-	private HashMap<String, byte[]> userPasswords;
 	private MessageDigest md;
 	private SecureRandom rd;
 
@@ -19,7 +21,6 @@ public class Authenticator {
 			;
 		}
 		this.rd = new SecureRandom();
-		this.userPasswords = new HashMap<String, byte[]>();
 
 		this.addUser("Bence", "password12");
 		this.addUser("Nicolo", "strong_password");
@@ -27,42 +28,48 @@ public class Authenticator {
 	}
 
 	private byte[] hashPassword(String password, byte[] salt) {
-		byte[] bytePwd = password.getBytes();
-		byte[] saltedPwd = new byte[bytePwd.length + salt.length];
-		System.arraycopy(bytePwd, 0, saltedPwd, 0, bytePwd.length);
-		System.arraycopy(salt, 0, saltedPwd, bytePwd.length, salt.length);
-
-		byte[] pwdHash = this.md.digest(saltedPwd);
-		
-		byte[] pwdHashSalt = new byte[pwdHash.length + salt.length];
-		System.arraycopy(pwdHash, 0, pwdHashSalt, 0, pwdHash.length);
-		System.arraycopy(salt, 0, pwdHashSalt, pwdHash.length, salt.length);
-
-		return pwdHashSalt;
+		this.md.update(salt);		
+		this.md.update(password.getBytes(StandardCharsets.UTF_8));
+		return this.md.digest();
 	}
 
 	private void addUser(String user, String password) {
 		byte[] salt = new byte[SALT_LENGTH];
 		this.rd.nextBytes(salt);
-
 		byte[] hashedPassword = this.hashPassword(password, salt);
-		this.userPasswords.put(user, hashedPassword);
-	}
 
-	private boolean checkPassword(String user, String password) {
-		byte[] hash = this.userPasswords.get(user);
-		if (hash == null) {
-			return false;
+
+		String salt64 = Base64.getEncoder().encodeToString(salt);
+		String password64 = Base64.getEncoder().encodeToString(hashedPassword);
+		String newline = user + "," + salt64 + "," +  password64 + "\n";
+		
+		FileWriter myWriter;
+		try {
+			myWriter = new FileWriter(FILE_PATH, true);
+			myWriter.append(newline);
+			myWriter.close();
+		} catch (Exception e) {
+			System.err.println("Password file not found.");
+			e.printStackTrace();
 		}
-
-		//byte[] pwdHash = Arrays.copyOfRange(hash, 0, HASH_LENGTH);
-		byte[] salt = Arrays.copyOfRange(hash, HASH_LENGTH, HASH_LENGTH + SALT_LENGTH);
-		byte[] checkHash = this.hashPassword(password, salt);
-
-		return this.md.isEqual(hash, checkHash);
 	}
 
-	public boolean authenticate(String username, String password) {
-		return checkPassword(username, password);
+	public boolean authenticate(String user, String password) {
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(FILE_PATH));
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		        String[] values = line.split(",");
+
+				if (values[0].equals(user)) {
+					byte[] salt = Base64.getDecoder().decode(values[1]);
+					byte[] storedPassword = Base64.getDecoder().decode(values[2]);
+					return this.md.isEqual(storedPassword, hashPassword(password, salt));
+				}
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 }
