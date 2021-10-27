@@ -18,7 +18,6 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if(this.tokenChecker.checkToken(token)){
             super.print(filename, printer);
         }
-        System.out.println("server: print");
     }
 
     @Override
@@ -30,10 +29,11 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public void topQueue(String printer, int job, String token) throws RemoteException {
+    public boolean topQueue(String printer, int job, String token) throws RemoteException {
         if(this.tokenChecker.checkToken(token)){
-            super.topQueue(printer, job);
+            return super.topQueue(printer, job);
         }
+		return false;
     }
 
     @Override
@@ -58,11 +58,11 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public String status(String printer, String token) throws RemoteException {
+    public int status(String printer, String token) throws RemoteException {
         if(this.tokenChecker.checkToken(token)){
             return super.status(printer);
         }
-        return null;
+        return 0;
     }
 
     @Override

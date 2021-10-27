@@ -3,11 +3,11 @@ import java.util.*;
 interface ServerInterface {
 	void print(String filename, String printer);
 	ArrayList<String> queue(String printer);
-	void topQueue(String printer, int job);
+	boolean topQueue(String printer, int job);
 	void start();
 	void stop();
 	void restart();
-	String status(String printer);
+	int status(String printer);
 	String readConfig(String parameter);
 	void setConfig(String parameter, String value);
 }
@@ -29,24 +29,35 @@ public class BaseServer implements ServerInterface {
 			this.printers.put(printer, new ArrayList<String>());
 		}
 		this.printers.get(printer).add(filename);
+		System.out.printf("Print: file %s in printer %s\n\n", filename, printer);
 	}
 
 	public ArrayList<String> queue(String printer) {
 		ArrayList<String> result = this.printers.get(printer);
 		if (result == null) {
-			return new ArrayList<String>();
+			result = new ArrayList<String>();
 		}
+		System.out.printf("Queue: printer %s\n", printer);
+		for (int i = 0; i < result.size(); i++) {
+			System.out.printf("%d %s\n", i+1, result.get(i));
+		}
+		System.out.println();
 		return result;
 	}
 
-	public void topQueue(String printer, int job) {
+	public boolean topQueue(String printer, int job) {
 		ArrayList<String> queue = this.printers.get(printer);
 		if (queue == null || queue.size() < job) {
-			return;
+			System.out.printf("TopQueue: job %d doesn't exist in printer "
+					+ "%s\n\n", job, printer);
+			return false;
 		}
 		String filename = queue.get(job-1);
 		queue.remove(job-1);
 		queue.add(0, filename);
+		System.out.printf("TopQueue: job %d (%s) in printer %s moved to the "
+				+ "top\n\n", job, filename, printer);
+		return true;
 	}
 
 	public void start() {
@@ -64,23 +75,27 @@ public class BaseServer implements ServerInterface {
 		this.start();
 	}
 
-	public String status(String printer) {
+	public int status(String printer) {
+		int jobs = 0;
 		ArrayList<String> queue = this.printers.get(printer);
-		if (queue == null || queue.isEmpty()) {
-			return String.format("Printer %s has no jobs", printer);
+		if (queue != null) {
+			jobs = queue.size();
 		}
-		return String.format("Printer %s has %d jobs", printer, queue.size());
+		System.out.printf("Status: printer %s has %d jobs\n\n", printer, jobs);
+		return jobs;
 	}
 
 	public String readConfig(String parameter) {
 		String value = this.parameters.get(parameter);
 		if (value == null) {
-			return "";
+			value = "";
 		}
+		System.out.printf("ReadConfig: %s -> \"%s\"\n\n", parameter, value);
 		return value;
 	}
 
 	public void setConfig(String parameter, String value) {
+		System.out.printf("SetConfig: %s -> \"%s\"\n\n", parameter, value);
 		this.parameters.put(parameter, value);
 	}
 }

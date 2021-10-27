@@ -24,7 +24,6 @@ public class Authenticator {
 		this.addUser("Bence", "password12");
 		this.addUser("Nicolo", "strong_password");
 		this.addUser("Vicente", "123");
-		System.out.println(this.userPasswords);
 	}
 
 	private byte[] hashPassword(String password, byte[] salt) {
