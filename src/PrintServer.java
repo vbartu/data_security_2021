@@ -100,10 +100,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
             registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
+			while (true);
         } catch (Exception e) {
             System.err.println("Print Server exception: ");
             e.printStackTrace();
         } finally {
+			System.out.println("Exiting...");
 			try {
 				if (registry != null) {
 					registry.unbind("IPrintServer");
