@@ -6,11 +6,11 @@ import java.util.*;
 public class Client {
 
     public static void main (String [] args) {
-        try {
+		
+        try(Scanner sc = new Scanner(System.in)) {
             Registry registry = LocateRegistry.getRegistry("localhost");
             IPrintServer server = (IPrintServer) registry.lookup("IPrintServer");
 
-			Scanner sc = new Scanner(System.in);
 			System.out.println("Print client CLI\n");
 			System.out.print("User: ");
 			String user = sc.nextLine().trim();
@@ -21,13 +21,13 @@ public class Client {
 				System.out.println("Invalid user or password");
 				return;
 			}
-			System.out.printf("Welcome %s!\n", user);
+			System.out.println("Welcome " + user);
 
 			while (true) {
 				System.out.print(" > ");
 				String cmd = sc.nextLine().trim();
 				if (cmd.equals("exit") || cmd.equals("quit") || cmd.equals("q")) {
-					System.out.printf("\nGoodbye %s\n", user);
+					System.out.println("Goodbye " + user);
 					return;
 				} else if (cmd.equals("")) {
 					continue;
