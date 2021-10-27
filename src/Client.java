@@ -43,7 +43,8 @@ public class Client {
 
 	public static void run_command(IPrintServer server, String token, String cmd) throws RemoteException {
 		String[] args = cmd.split(" ");
-		switch (args[0]) {
+		try {
+			switch (args[0]) {
 
 			case "print":
 				if (args.length != 3) {
@@ -140,6 +141,11 @@ public class Client {
 
 			default:
 				System.out.printf("Unknown command \"%s\"\n", args[0]);
+			}
+		} catch (ServerNotStartedException e) {
+			System.out.println("Server is not started");
+		} catch (ServerAlreadyStartedException e) {
+			System.out.println("Server is already started");
 		}
 	}
 }

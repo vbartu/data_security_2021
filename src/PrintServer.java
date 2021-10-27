@@ -14,14 +14,14 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public void print(String filename, String printer, String token) throws RemoteException {
+    public void print(String filename, String printer, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             super.print(filename, printer);
         }
     }
 
     @Override
-    public ArrayList<String> queue(String printer, String token) throws RemoteException {
+    public ArrayList<String> queue(String printer, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)) {
             return super.queue(printer);
         }
@@ -29,7 +29,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public boolean topQueue(String printer, int job, String token) throws RemoteException {
+    public boolean topQueue(String printer, int job, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             return super.topQueue(printer, job);
         }
@@ -37,28 +37,28 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public void start(String token) throws RemoteException {
+    public void start(String token) throws RemoteException, ServerAlreadyStartedException {
         if(this.tokenChecker.checkToken(token)){
             super.start();
         }
     }
 
     @Override
-    public void stop(String token) throws RemoteException {
+    public void stop(String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             super.stop();
         }
     }
 
     @Override
-    public void restart(String token) throws RemoteException {
+    public void restart(String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             super.restart();
         }
     }
 
     @Override
-    public int status(String printer, String token) throws RemoteException {
+    public int status(String printer, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             return super.status(printer);
         }
@@ -66,7 +66,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public String readConfig(String parameter, String token) throws RemoteException {
+    public String readConfig(String parameter, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             return super.readConfig(parameter);
         }
@@ -74,7 +74,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
     @Override
-    public void setConfig(String parameter, String value, String token) throws RemoteException {
+    public void setConfig(String parameter, String value, String token) throws RemoteException, ServerNotStartedException {
         if(this.tokenChecker.checkToken(token)){
             super.setConfig(parameter, value);
         }
@@ -100,11 +100,14 @@ public class PrintServer extends BaseServer implements IPrintServer {
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
             registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
+			System.out.println("1");
 			while (true);
         } catch (Exception e) {
+			System.out.println("2");
             System.err.println("Print Server exception: ");
             e.printStackTrace();
         } finally {
+			System.out.println("3");
 			System.out.println("Exiting...");
 			try {
 				if (registry != null) {
