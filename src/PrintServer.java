@@ -94,14 +94,21 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if(System.getSecurityManager() == null){
             System.setSecurityManager(new SecurityManager());
         }*/
+        Registry registry = null;
         try {
             IPrintServer server = new PrintServer();
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
-            Registry registry = LocateRegistry.getRegistry();
+            registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
         } catch (Exception e) {
             System.err.println("Print Server exception: ");
             e.printStackTrace();
-        }
+        } finally {
+			try {
+				if (registry != null) {
+					registry.unbind("IPrintServer");
+				}
+			} catch (Exception e) {}
+		}
     }
 }
