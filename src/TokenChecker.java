@@ -2,9 +2,9 @@ import java.security.SecureRandom;
 import java.util.*;
 
 
-class TokenInfo {
-	static final int VALIDITY_MS = 5*60*1000;
 
+class TokenInfo {
+	static final int VALIDITY_MS = 5*30*1000;
 	public String user;
 	public Date validity;
 
@@ -44,15 +44,16 @@ public class TokenChecker {
 		return stringToken;
 	}
 
-	public boolean checkToken(String token) {
+	public String checkToken(String token) {
 		TokenInfo tokenInfo = this.sessions.get(token);
 		if (tokenInfo == null) {
-			return false;
+			return null;
 		}
 		Date now = new Date(System.currentTimeMillis());
 		if (now.compareTo(tokenInfo.validity) > 0) {
-			return false;
+			return null;
 		}
-		return true;
+		tokenInfo.validity = new Date(System.currentTimeMillis() + TokenInfo.VALIDITY_MS);
+		return tokenInfo.user;
 	}
 }
