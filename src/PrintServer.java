@@ -171,7 +171,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
         } catch (Exception e) {
             System.err.println("Print Server exception: ");
             e.printStackTrace();
+        } finally {
 			((PrintServer) server).close();
-        }
+		}
     }
 }
