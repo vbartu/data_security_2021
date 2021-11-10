@@ -6,12 +6,12 @@ public class AuthorizationService {
 	static final String USER_FILE = "../policies/user-roles.csv";
 	static final String ROLES_FILE = "../policies/role-pem.csv";
 
-	private HashMap<String,String> userRoles;
-	private HashMap<String,HashSet<Right>> roleRights;
+	private HashMap<String,List<String>> userRoles;
+	private HashMap<String,Set<Right>> roleRights;
 
 	public AuthorizationService() {
-		this.userRoles = new HashMap<String,String>();
-		this.roleRights = new HashMap<String,HashSet<Right>>();
+		this.userRoles = new HashMap<String,List<String>>();
+		this.roleRights = new HashMap<String,Set<Right>>();
 		this.loadPolicyFiles();
 	}
 
@@ -23,7 +23,12 @@ public class AuthorizationService {
 		    while ((line = br.readLine()) != null) {
 				if (line.equals("User,Role")) continue;
 		        String[] values = line.split(",");
-				this.userRoles.put(values[0], values[1]);
+
+				ArrayList<String> roles = new ArrayList<String>();
+				for (int i = 1; i < values.length; i++) {
+					roles.add(values[i]);
+				}
+				this.userRoles.put(values[0], roles);
 		    }
 
 			br.close();
@@ -31,6 +36,7 @@ public class AuthorizationService {
 		    while ((line = br.readLine()) != null) {
 				if (line.equals("Role,Permissions")) continue;
 		        String[] values = line.split(",");
+
 				HashSet<Right> rights = new HashSet<Right>();
 				for (int i = 1; i < values.length; i++) {
 					switch (values[i]) {
@@ -72,15 +78,20 @@ public class AuthorizationService {
 	}
 
 	public boolean checkAccessRight(String user, Right right) {
-		String role = this.userRoles.get(user);
-		if (role == null) {
+		List<String> roles = this.userRoles.get(user);
+		if (roles == null) {
 			return false;
 		}
 
-		if (!this.roleRights.containsKey(role)) {
-			return false;
-		}
+		for (String role : roles) {
+			if (!this.roleRights.containsKey(role)) {
+				continue;
+			}
 
-		return this.roleRights.get(role).contains(right);
+			if (this.roleRights.get(role).contains(right)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
