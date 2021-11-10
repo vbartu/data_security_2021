@@ -1,0 +1,11 @@
+public enum Right {
+	PRINT,
+	QUEUE,
+	TOP_QUEUE,
+	START,
+	STOP,
+	RESTART,
+	STATUS,
+	READ_CONFIG,
+	SET_CONFIG,
+}
