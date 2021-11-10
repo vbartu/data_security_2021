@@ -1,5 +1,0 @@
-Role,Permissions
-admin,print,queue,topQueue,start,stop,restart,status,readConfig,setConfig
-service_tech,start,stop,restart,status,readConfig,setConfig
-power_user,print,queue,topQueue,restart
-user,print,queue
