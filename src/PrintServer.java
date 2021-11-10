@@ -159,7 +159,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
             IPrintServer stub = (IPrintServer) UnicastRemoteObject.exportObject(server, 0);
             registry = LocateRegistry.getRegistry();
             registry.bind("IPrintServer", stub);
-			System.out.println("1");
+			System.out.println("Print Sever started!");
 			while (true){
                 Thread.sleep(1000);
                 if(sc.nextLine().trim().equals("q")){
@@ -169,7 +169,6 @@ public class PrintServer extends BaseServer implements IPrintServer {
                 }
             }
         } catch (Exception e) {
-			System.out.println("2");
             System.err.println("Print Server exception: ");
             e.printStackTrace();
 			((PrintServer) server).close();
