@@ -13,8 +13,6 @@ public class AuthorizationService {
 		this.userRoles = new HashMap<String,String>();
 		this.roleRights = new HashMap<String,HashSet<Right>>();
 		this.loadPolicyFiles();
-		System.out.println(this.userRoles);
-		System.out.println(this.roleRights);
 	}
 
 	private void loadPolicyFiles() {
