@@ -8,6 +8,7 @@ import java.io.*;
 
 public class PrintServer extends BaseServer implements IPrintServer {
 	static final String LOG_FILE = "/tmp/print_server.log";
+	static final String unauthUser = "UNATHORISED USER";
 
     private TokenChecker tokenChecker;
     private Authenticator authenticator;
@@ -24,6 +25,7 @@ public class PrintServer extends BaseServer implements IPrintServer {
     }
 
 	private void log(String info) {
+		System.out.println(info);
 		try {
 			this.logfile.append(info + "\n");
 			this.logfile.flush();
@@ -44,10 +46,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public void print(String filename, String printer, String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: print operation", user));
+			this.log(String.format("(%s) Print: file %s in printer %s",
+						user, filename, printer, user));
             super.print(filename, printer);
         } else {
-			this.log("INVALID USER: print operation");
+			this.log(String.format("(%s) Print: file %s in printer %s",
+						unauthUser, filename, printer, user));
         }
     }
 
@@ -56,10 +60,10 @@ public class PrintServer extends BaseServer implements IPrintServer {
 
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: queue operation", user));
+			this.log(String.format("(%s) Queue: printer %s", user, printer));
             return super.queue(printer);
         } else {
-			this.log("INVALID USER: queue operation");
+			this.log(String.format("(%s) Queue: printer %s", unauthUser, printer));
 		}
         return null;
     }
@@ -68,10 +72,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public boolean topQueue(String printer, int job, String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: topQueue operation", user));
+			this.log(String.format("(%s) TopQueue: job %d in printer %s", 
+						user, job, printer));
             return super.topQueue(printer, job);
         } else {
-			this.log("INVALID USER: topQueue operation");
+			this.log(String.format("(%s) TopQueue: job %d in printer %s", 
+						unauthUser, job, printer));
         }
 		return false;
     }
@@ -80,10 +86,10 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public void start(String token) throws RemoteException, ServerAlreadyStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: start operation", user));
+			this.log(String.format("(%s) Start", user));
             super.start();
         } else {
-			this.log("INVALID USER: start operation");
+			this.log(String.format("(%s) Start", unauthUser));
         }
     }
 
@@ -91,10 +97,10 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public void stop(String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: stop operation", user));
+			this.log(String.format("(%s) Stop", user));
             super.stop();
         } else {
-			this.log("INVALID USER: stop operation");
+			this.log(String.format("(%s) Stop", unauthUser));
         }
     }
 
@@ -102,10 +108,10 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public void restart(String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: restart operation", user));
+			this.log(String.format("(%s) Restart", user));
             super.restart();
         } else {
-			this.log("INVALID USER: restart operation");
+			this.log(String.format("(%s) Restart", unauthUser));
         }
     }
 
@@ -113,10 +119,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public int status(String printer, String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: status operation", user));
+			this.log(String.format("(%s) Status: printer %s",
+						user, printer));
             return super.status(printer);
         } else {
-			this.log("INVALID USER: status operation");
+			this.log(String.format("(%s) Status: printer %s",
+						unauthUser, printer));
         }
         return 0;
     }
@@ -125,10 +133,10 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public String readConfig(String parameter, String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: readConfig operation", user));
+			this.log(String.format("(%s) ReadConfig: %s", user, parameter));
             return super.readConfig(parameter);
         } else {
-			this.log("INVALID USER: readConfig operation");
+			this.log(String.format("(%s) ReadConfig: %s", unauthUser, parameter));
         }
         return null;
     }
@@ -137,10 +145,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
     public void setConfig(String parameter, String value, String token) throws RemoteException, ServerNotStartedException {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
-			this.log(String.format("%s: setCofig operation", user));
+			this.log(String.format("(%s) SetCofig: %s -> %s",
+						user, parameter, value));
             super.setConfig(parameter, value);
         } else {
-			this.log("INVALID USER: setCofig operation");
+			this.log(String.format("(%s) SetCofig: %s -> %s",
+						unauthUser, parameter, value));
         }
     }
 
