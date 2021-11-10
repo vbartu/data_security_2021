@@ -8,7 +8,7 @@ import java.io.*;
 
 public class PrintServer extends BaseServer implements IPrintServer {
 	static final String LOG_FILE = "/tmp/print_server.log";
-	static final String unauthUser = "UNATHORISED USER";
+	static final String unauthUser = "UNAUTHENTICATED USER";
 
     private TokenChecker tokenChecker;
     private Authenticator authenticator;
