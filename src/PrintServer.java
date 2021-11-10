@@ -12,11 +12,13 @@ public class PrintServer extends BaseServer implements IPrintServer {
 
     private TokenChecker tokenChecker;
     private Authenticator authenticator;
+	private AuthorizationService authorization;
 	private FileWriter logfile;
 
     public PrintServer() {
         this.tokenChecker = new TokenChecker();
         this.authenticator = new Authenticator();
+		this.authorization = new AuthorizationService();
 		try {
 			this.logfile = new FileWriter(LOG_FILE, true);
 		} catch (Exception e) {
@@ -48,7 +50,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Print: file %s in printer %s",
 						user, filename, printer, user));
-            super.print(filename, printer);
+			if (this.authorization.checkAccessRight(user, Right.PRINT)) {
+				this.log(String.format("%s is authorized to Print", user));
+				super.print(filename, printer);
+			} else {
+				this.log(String.format("%s is not authorized to Print", user));
+			}
         } else {
 			this.log(String.format("(%s) Print: file %s in printer %s",
 						unauthUser, filename, printer, user));
@@ -61,7 +68,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
 			this.log(String.format("(%s) Queue: printer %s", user, printer));
-            return super.queue(printer);
+			if (this.authorization.checkAccessRight(user, Right.QUEUE)) {
+				this.log(String.format("%s is authorized to Queue", user));
+				return super.queue(printer);
+			} else {
+				this.log(String.format("%s is not authorized to Queue", user));
+			}
         } else {
 			this.log(String.format("(%s) Queue: printer %s", unauthUser, printer));
 		}
@@ -74,7 +86,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) TopQueue: job %d in printer %s", 
 						user, job, printer));
-            return super.topQueue(printer, job);
+			if (this.authorization.checkAccessRight(user, Right.TOP_QUEUE)) {
+				this.log(String.format("%s is authorized to TopQueue", user));
+				return super.topQueue(printer, job);
+			} else {
+				this.log(String.format("%s is not authorized to TopQueue", user));
+			}
         } else {
 			this.log(String.format("(%s) TopQueue: job %d in printer %s", 
 						unauthUser, job, printer));
@@ -87,7 +104,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
 			this.log(String.format("(%s) Start", user));
-            super.start();
+			if (this.authorization.checkAccessRight(user, Right.START)) {
+				this.log(String.format("%s is authorized to Start", user));
+				super.start();
+			} else {
+				this.log(String.format("%s is not authorized to Stop", user));
+			}
         } else {
 			this.log(String.format("(%s) Start", unauthUser));
         }
@@ -98,7 +120,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
 			this.log(String.format("(%s) Stop", user));
-            super.stop();
+			if (this.authorization.checkAccessRight(user, Right.STOP)) {
+				this.log(String.format("%s is authorized to Stop", user));
+				super.stop();
+			} else {
+				this.log(String.format("%s is not authorized to Stop", user));
+			}
         } else {
 			this.log(String.format("(%s) Stop", unauthUser));
         }
@@ -109,7 +136,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
 			this.log(String.format("(%s) Restart", user));
-            super.restart();
+			if (this.authorization.checkAccessRight(user, Right.RESTART)) {
+				this.log(String.format("%s is authorized to Restart", user));
+				super.restart();
+			} else {
+				this.log(String.format("%s is not authorized to Restart", user));
+			}
         } else {
 			this.log(String.format("(%s) Restart", unauthUser));
         }
@@ -121,7 +153,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Status: printer %s",
 						user, printer));
-            return super.status(printer);
+			if (this.authorization.checkAccessRight(user, Right.STATUS)) {
+				this.log(String.format("%s is authorized to Status", user));
+				return super.status(printer);
+			} else {
+				this.log(String.format("%s is not authorized to Status", user));
+			}
         } else {
 			this.log(String.format("(%s) Status: printer %s",
 						unauthUser, printer));
@@ -134,7 +171,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
 		String user = this.tokenChecker.checkToken(token);
         if (user != null) {
 			this.log(String.format("(%s) ReadConfig: %s", user, parameter));
-            return super.readConfig(parameter);
+			if (this.authorization.checkAccessRight(user, Right.READ_CONFIG)) {
+				this.log(String.format("%s is authorized to ReadConfig", user));
+				return super.readConfig(parameter);
+			} else {
+				this.log(String.format("%s is not authorized to ReadConfig", user));
+			}
         } else {
 			this.log(String.format("(%s) ReadConfig: %s", unauthUser, parameter));
         }
@@ -147,7 +189,12 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) SetCofig: %s -> %s",
 						user, parameter, value));
-            super.setConfig(parameter, value);
+			if (this.authorization.checkAccessRight(user, Right.SET_CONFIG)) {
+				this.log(String.format("%s is authorized to SetConfig", user));
+				super.setConfig(parameter, value);
+			} else {
+				this.log(String.format("%s is not authorized to SetConfig", user));
+			}
         } else {
 			this.log(String.format("(%s) SetCofig: %s -> %s",
 						unauthUser, parameter, value));
