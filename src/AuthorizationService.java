@@ -3,35 +3,22 @@ import java.io.*;
 
 
 public class AuthorizationService {
-	static final String USER_FILE = "../policies/user-roles.csv";
-	static final String ROLES_FILE = "../policies/role-pem.csv";
+	static final String RIGHTS_FILE = "../policies/rights.csv";
 
-	private HashMap<String,String> userRoles;
-	private HashMap<String,HashSet<Right>> roleRights;
+	private HashMap<String,HashSet<Right>> userRights;
 
 	public AuthorizationService() {
-		this.userRoles = new HashMap<String,String>();
-		this.roleRights = new HashMap<String,HashSet<Right>>();
+		this.userRights = new HashMap<String,HashSet<Right>>();
 		this.loadPolicyFiles();
-		System.out.println(this.userRoles);
-		System.out.println(this.roleRights);
 	}
 
 	private void loadPolicyFiles() {
 		try {
 		    String line;
 
-			BufferedReader br = new BufferedReader(new FileReader(USER_FILE));
+			BufferedReader br = new BufferedReader(new FileReader(RIGHTS_FILE));
 		    while ((line = br.readLine()) != null) {
-				if (line.equals("User,Role")) continue;
-		        String[] values = line.split(",");
-				this.userRoles.put(values[0], values[1]);
-		    }
-
-			br.close();
-			br = new BufferedReader(new FileReader(ROLES_FILE));
-		    while ((line = br.readLine()) != null) {
-				if (line.equals("Role,Permissions")) continue;
+				if (line.equals("User,Permissions")) continue;
 		        String[] values = line.split(",");
 				HashSet<Right> rights = new HashSet<Right>();
 				for (int i = 1; i < values.length; i++) {
@@ -65,7 +52,7 @@ public class AuthorizationService {
 							break;
 					}
 				}
-				this.roleRights.put(values[0], rights);
+				this.userRights.put(values[0], rights);
 		    }
 			br.close();
 		} catch (Exception e) {
@@ -74,15 +61,10 @@ public class AuthorizationService {
 	}
 
 	public boolean checkAccessRight(String user, Right right) {
-		String role = this.userRoles.get(user);
-		if (role == null) {
+		if (!this.userRights.containsKey(user)) {
 			return false;
 		}
 
-		if (!this.roleRights.containsKey(role)) {
-			return false;
-		}
-
-		return this.roleRights.get(role).contains(right);
+		return this.userRights.get(user).contains(right);
 	}
 }
