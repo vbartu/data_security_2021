@@ -18,13 +18,20 @@ public class Authenticator {
 		try {
 			this.md = MessageDigest.getInstance("SHA-512");
 		} catch (Exception e) {
-			;
+			e.printStackTrace();
 		}
 		this.rd = new SecureRandom();
 
-		this.addUser("Bence", "password12");
-		this.addUser("Nicolo", "strong_password");
-		this.addUser("Vicente", "123");
+		File passwordFile = new File(FILE_PATH);
+		if (!passwordFile.exists()) {
+			this.addUser("Alice", "pwdalice");
+			this.addUser("Bob", "pwdbob");
+			this.addUser("Cecilia", "pwdcecilia");
+			this.addUser("David", "pwddavid");
+			this.addUser("Erica", "pwderica");
+			this.addUser("Fred", "pwdfred");
+			this.addUser("George", "pwdgeorge");
+		}
 	}
 
 	private byte[] hashPassword(String password, byte[] salt) {
