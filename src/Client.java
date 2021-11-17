@@ -60,7 +60,7 @@ public class Client {
 					return;
 				}
 				ArrayList<String> files = server.queue(args[1], token);
-				if (files.isEmpty()) {
+				if (files == null || files.isEmpty()) {
 					System.out.printf("Printer %s queue is empty\n", args[1]);
 				} else {
 					System.out.printf("Printer %s queue:\n", args[1]);
