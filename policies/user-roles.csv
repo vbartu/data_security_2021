@@ -1,6 +1,6 @@
 User,Role
 Alice,admin
-Bob,service_tech
+Bob,janitor,service_tech
 Cecilia,power_user
 David,user
 Erica,user
