@@ -7,7 +7,7 @@ import java.io.*;
 
 public class Authenticator {
 
-	static final String FILE_PATH = "/tmp/print_server_users.csv";
+	static final String FILE_PATH = "../policies/print_server_users.csv";
 	static final int HASH_LENGTH = 64; // 512 bits
 	static final int SALT_LENGTH = 8;  // 64 bits
 
