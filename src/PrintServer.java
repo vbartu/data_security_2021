@@ -51,7 +51,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
 			this.log(String.format("(%s) Print: file %s in printer %s",
 						user, filename, printer, user));
 			if (this.authorization.checkAccessRight(user, Right.PRINT)) {
-				this.log(String.format("%s is authorized to Print", user));
+				this.log(String.format("%s (%s) is authorized to Print", user,
+							this.authorization.getRole(user, Right.PRINT)));
 				super.print(filename, printer);
 			} else {
 				this.log(String.format("%s is not authorized to Print", user));
@@ -69,7 +70,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Queue: printer %s", user, printer));
 			if (this.authorization.checkAccessRight(user, Right.QUEUE)) {
-				this.log(String.format("%s is authorized to Queue", user));
+				this.log(String.format("%s (%s) is authorized to Queue", user,
+							this.authorization.getRole(user, Right.QUEUE)));
 				return super.queue(printer);
 			} else {
 				this.log(String.format("%s is not authorized to Queue", user));
@@ -87,7 +89,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
 			this.log(String.format("(%s) TopQueue: job %d in printer %s", 
 						user, job, printer));
 			if (this.authorization.checkAccessRight(user, Right.TOP_QUEUE)) {
-				this.log(String.format("%s is authorized to TopQueue", user));
+				this.log(String.format("%s (%s) is authorized to TopQueue", user,
+							this.authorization.getRole(user, Right.TOP_QUEUE)));
 				return super.topQueue(printer, job);
 			} else {
 				this.log(String.format("%s is not authorized to TopQueue", user));
@@ -105,7 +108,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Start", user));
 			if (this.authorization.checkAccessRight(user, Right.START)) {
-				this.log(String.format("%s is authorized to Start", user));
+				this.log(String.format("%s (%s) is authorized to Start", user,
+							this.authorization.getRole(user, Right.START)));
 				super.start();
 			} else {
 				this.log(String.format("%s is not authorized to Stop", user));
@@ -121,7 +125,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Stop", user));
 			if (this.authorization.checkAccessRight(user, Right.STOP)) {
-				this.log(String.format("%s is authorized to Stop", user));
+				this.log(String.format("%s (%s) is authorized to Stop", user,
+							this.authorization.getRole(user, Right.STOP)));
 				super.stop();
 			} else {
 				this.log(String.format("%s is not authorized to Stop", user));
@@ -137,7 +142,9 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) Restart", user));
 			if (this.authorization.checkAccessRight(user, Right.RESTART)) {
-				this.log(String.format("%s is authorized to Restart", user));
+				this.log(String.format("%s (%s) is authorized to Restart", user,
+							this.authorization.getRole(user, Right.RESTART)));
+
 				super.restart();
 			} else {
 				this.log(String.format("%s is not authorized to Restart", user));
@@ -154,7 +161,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
 			this.log(String.format("(%s) Status: printer %s",
 						user, printer));
 			if (this.authorization.checkAccessRight(user, Right.STATUS)) {
-				this.log(String.format("%s is authorized to Status", user));
+				this.log(String.format("%s (%s) is authorized to Status", user,
+							this.authorization.getRole(user, Right.STATUS)));
 				return super.status(printer);
 			} else {
 				this.log(String.format("%s is not authorized to Status", user));
@@ -172,7 +180,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
         if (user != null) {
 			this.log(String.format("(%s) ReadConfig: %s", user, parameter));
 			if (this.authorization.checkAccessRight(user, Right.READ_CONFIG)) {
-				this.log(String.format("%s is authorized to ReadConfig", user));
+				this.log(String.format("%s (%s) is authorized to ReadConfig", user,
+							this.authorization.getRole(user, Right.READ_CONFIG)));
 				return super.readConfig(parameter);
 			} else {
 				this.log(String.format("%s is not authorized to ReadConfig", user));
@@ -190,7 +199,8 @@ public class PrintServer extends BaseServer implements IPrintServer {
 			this.log(String.format("(%s) SetCofig: %s -> %s",
 						user, parameter, value));
 			if (this.authorization.checkAccessRight(user, Right.SET_CONFIG)) {
-				this.log(String.format("%s is authorized to SetConfig", user));
+				this.log(String.format("%s (%s) is authorized to SetConfig", user,
+							this.authorization.getRole(user, Right.SET_CONFIG)));
 				super.setConfig(parameter, value);
 			} else {
 				this.log(String.format("%s is not authorized to SetConfig", user));

@@ -94,4 +94,22 @@ public class AuthorizationService {
 		}
 		return false;
 	}
+
+	public String getRole(String user, Right right) {
+		List<String> roles = this.userRoles.get(user);
+		if (roles == null) {
+			return "";
+		}
+
+		for (String role : roles) {
+			if (!this.roleRights.containsKey(role)) {
+				continue;
+			}
+
+			if (this.roleRights.get(role).contains(right)) {
+				return role;
+			}
+		}
+		return "";
+	}
 }
