@@ -31,6 +31,8 @@ public class Authenticator {
 			this.addUser("Erica", "pwderica");
 			this.addUser("Fred", "pwdfred");
 			this.addUser("George", "pwdgeorge");
+			this.addUser("Henry", "pwdhenry");
+			this.addUser("Ida", "pwdida");
 		}
 	}
 
